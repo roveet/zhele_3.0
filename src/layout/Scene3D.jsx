@@ -1,63 +1,101 @@
 import React, { useRef, useEffect } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Center, Environment, useGLTF } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
+import { Center, Environment, useGLTF, useTexture, OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 
 function Model() {
-  const group = useRef()
-
-  // 1. Просто загружаем гирю. Она уже внутри содержит ВСЕ твои текстуры из Сабстенса!
   const { scene } = useGLTF('./models/kettlebell.glb')
 
-  // 2. Нам нужно только слегка поправить настройки отображения, чтобы металл не чернел
+  const [
+    jellyColor, jellyNormal,
+    metalColor, metalNormal,
+    lightColor, lightNormal
+  ] = useTexture([
+    './textures/kettlebell/jelly_baseColor.png',
+    './textures/kettlebell/jelly_normal.png',
+    './textures/kettlebell/metal_baseColor.png',
+    './textures/kettlebell/metal_normal.png',
+    './textures/kettlebell/metal_light_baseColor.png',
+    './textures/kettlebell/metal_light_normal.png',
+  ])
+
+  useEffect(() => {
+    jellyColor.colorSpace = THREE.SRGBColorSpace
+    metalColor.colorSpace = THREE.SRGBColorSpace
+    lightColor.colorSpace = THREE.SRGBColorSpace
+
+    const allTextures = [jellyColor, jellyNormal, metalColor, metalNormal, lightColor, lightNormal]
+    allTextures.forEach((texture) => {
+      texture.flipY = false
+      texture.needsUpdate = true
+    })
+  }, [jellyColor, jellyNormal, metalColor, metalNormal, lightColor, lightNormal])
+
   useEffect(() => {
     scene.traverse((child) => {
-      if (child.isMesh && child.material) {
+      if (child.isMesh) {
         const matName = child.material.name.toLowerCase()
+        child.material.envMapIntensity = 1.0
 
-        // Подкручиваем окружение для всех материалов, чтобы заиграли блики
-        child.material.envMapIntensity = 2.0
+        
 
-        // Если это ручка, сделаем её чуть светлее за счет roughness
-        if (matName.includes('metal') && !matName.includes('light')) {
-          child.material.roughness = 0.25 // Металл станет мягче рассеивать свет и посветлеет
+        if (matName.includes('jelly')) {
+          child.material = new THREE.MeshStandardMaterial({
+            map: jellyColor,
+            normalMap: jellyNormal,
+            roughness: 0.2,
+            metalness: 0.0,
+          })
         }
 
-        // Если это желе, пока держим его непрозрачным для теста швов
-        if (matName.includes('jelly')) {
-          child.material.transparent = false
-          child.material.opacity = 1.0
+        if (matName.includes('metal') && !matName.includes('light')) {
+          child.material = new THREE.MeshStandardMaterial({
+            map: metalColor,
+            normalMap: metalNormal,
+            roughness: 0.3,
+            metalness: 1.0,
+          })
+        }
+
+        if (matName.includes('light')) {
+          child.material = new THREE.MeshStandardMaterial({
+            map: lightColor,
+            normalMap: lightNormal,
+            roughness: 0.3,
+            metalness: 1.0,
+          })
         }
 
         child.material.needsUpdate = true
       }
     })
-  }, [scene])
+  }, [scene, jellyColor, jellyNormal, metalColor, metalNormal, lightColor, lightNormal])
 
-  // 3. Вращение за курсором
-  useFrame((state) => {
-    const { x, y } = state.mouse
-    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, x * 0.6, 0.07)
-    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, -y * 0.4, 0.07)
-  })
-
-  return <primitive ref={group} object={scene} />
+  // Автоматическое вращение за курсором убрано, чтобы не мешать OrbitControls
+  return <primitive object={scene} />
 }
 
 export default function Scene3D() {
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#111111' }}>
-      <Canvas camera={{ position: [0, 0, 0.85], fov: 45 }}>
+      <Canvas camera={{ position: [0, 0, 0.85], fov: 45 }} gl={{ antialias: true }}>
         
-        {/* Родное студийное окружение для сочных отражений */}
-        {/* <Environment preset="studio" intensity={1.5} /> */}
+        <Environment preset="city" intensity={0.8} />
         
-        <ambientLight intensity={0.7} />
-        <directionalLight position={[0, 4, 5]} intensity={1.5} />
+        <ambientLight intensity={0.3} />
+        <directionalLight position={[2, 4, 5]} intensity={0.8} />
 
         <Center>
           <Model />
         </Center>
+
+        {/* Инструмент для ручного осмотра модели */}
+        <OrbitControls 
+          enableDamping={true}       // Плавное торможение при вращении
+          dampingFactor={0.05}
+          minDistance={0.4}          // Максимальное приближение к гире
+          maxDistance={2.0}          // Максимальное отдаление
+        />
       </Canvas>
     </div>
   )
