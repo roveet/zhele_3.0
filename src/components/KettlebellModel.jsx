@@ -1,9 +1,8 @@
-import React, { useRef, useEffect } from 'react'
-import { Canvas } from '@react-three/fiber'
-import { Center, Environment, useGLTF, useTexture, OrbitControls } from '@react-three/drei'
+import React, { useEffect } from 'react'
+import { useGLTF, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 
-function Model() {
+export default function KettlebellModel() {
   const { scene } = useGLTF('./models/kettlebell.glb')
 
   const [
@@ -37,8 +36,6 @@ function Model() {
         const matName = child.material.name.toLowerCase()
         child.material.envMapIntensity = 1.0
 
-        
-
         if (matName.includes('jelly')) {
           child.material = new THREE.MeshStandardMaterial({
             map: jellyColor,
@@ -71,34 +68,8 @@ function Model() {
     })
   }, [scene, jellyColor, jellyNormal, metalColor, metalNormal, lightColor, lightNormal])
 
-  // Автоматическое вращение за курсором убрано, чтобы не мешать OrbitControls
   return <primitive object={scene} />
 }
 
-export default function Scene3D() {
-  return (
-    <div style={{ width: '100vw', height: '100vh', background: '#111111' }}>
-      <Canvas camera={{ position: [0, 0, 0.85], fov: 45 }} gl={{ antialias: true }}>
-        
-        <Environment preset="city" intensity={0.8} />
-        
-        <ambientLight intensity={0.3} />
-        <directionalLight position={[2, 4, 5]} intensity={0.8} />
-
-        <Center>
-          <Model />
-        </Center>
-
-        {/* Инструмент для ручного осмотра модели */}
-        <OrbitControls 
-          enableDamping={true}       // Плавное торможение при вращении
-          dampingFactor={0.05}
-          minDistance={0.4}          // Максимальное приближение к гире
-          maxDistance={2.0}          // Максимальное отдаление
-        />
-      </Canvas>
-    </div>
-  )
-}
-
+// Предзагрузка, чтобы моделька не тупила при открытии сайта
 useGLTF.preload('./models/kettlebell.glb')
