@@ -1,0 +1,38 @@
+/* ==================================================
+   TRANSFORMATION CONTROLS
+   ================================================== */
+
+.transform-controls {
+  position: absolute;
+
+  left: 48px;
+  bottom: 200px;
+
+  width: 320px;
+
+  padding: 20px;
+
+  border-radius: 16px;
+
+  background: rgba(20, 20, 20, 0.85);
+
+  backdrop-filter: blur(20px);
+
+  pointer-events: auto;
+}
+
+/* ==================================================
+   TITLE
+   ================================================== */
+
+.transform-controls__title {
+  margin-bottom: 12px;
+}
+
+/* ==================================================
+   RANGE
+   ================================================== */
+
+.transform-controls input {
+  width: 100%;
+}

@@ -1,0 +1,29 @@
+/* ==================================================
+   UI LAYER
+   ================================================== */
+
+.ui-layer {
+  position: fixed;
+  inset: 0;
+
+  z-index: 100;
+
+  pointer-events: none;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 48px;
+}
+
+/* ==================================================
+   MAIN OVERLAY
+   ================================================== */
+
+.overlay {
+  flex: 1;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}

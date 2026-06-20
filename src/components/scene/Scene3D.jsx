@@ -1,12 +1,13 @@
 import React, { useState } from 'react' // ДОБАВИЛИ useState
 import { Canvas } from '@react-three/fiber'
-import { Center, Environment, OrbitControls, Html } from '@react-three/drei' // ДОБАВИЛИ Html
+import { Center, Environment, OrbitControls} from '@react-three/drei' // ДОБАВИЛИ Html
 import KettlebellModel from './KettlebellModel'
 
-export default function Scene3D() {
-  // 1. ДОБАВИЛИ: Стейт для хранения прогресса трансформации (от 0 до 1)
-  const [transformProgress, setTransformProgress] = useState(0)
+export default function Scene3D({
+  transformProgress
+}) {
 
+  
   // 2. ДОБАВИЛИ: Управляющий цвет желе (фиолетовый, как в Substance)
   const jellyBaseColor = '#228797'
 
@@ -59,12 +60,10 @@ export default function Scene3D() {
   {/* МОДЕЛЬ */}
   {/* ===================================================================== */}
 
-  <Center>
     <KettlebellModel
       progress={transformProgress}
       jellyColor={jellyBaseColor}
     />
-  </Center>
 
   {/* ===================================================================== */}
   {/* КОНТРОЛЫ */}
@@ -82,55 +81,8 @@ export default function Scene3D() {
     maxPolarAngle={Math.PI / 1.8}
   />
 
-  {/* ===================================================================== */}
-  {/* UI */}
-  {/* ===================================================================== */}
-
-  <Html
-    position={[0, -0.42, 0]}
-    transform={false}
-  >
-    <div
-      style={{
-        width: '340px',
-        background: 'rgba(25,25,25,0.75)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        padding: '18px 22px',
-        borderRadius: '16px',
-        backdropFilter: 'blur(20px)',
-        color: '#fff',
-        fontFamily: 'Inter, sans-serif'
-      }}
-    >
-      <div
-        style={{
-          marginBottom: '12px',
-          fontSize: '14px',
-          fontWeight: 600
-        }}
-      >
-        Трансформация «ЖЕЛЕ 3.0»
-      </div>
-
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value={transformProgress}
-        onChange={(e) =>
-          setTransformProgress(
-            parseFloat(e.target.value)
-          )
-        }
-        style={{
-          width: '100%',
-          cursor: 'pointer'
-        }}
-      />
-    </div>
-  </Html>
 </Canvas>
     </div>
   )
 }
+
