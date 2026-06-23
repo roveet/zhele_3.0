@@ -6,7 +6,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   pointer-events: auto;
 }
 
@@ -14,8 +13,26 @@
    LEFT
    ================================================== */
 
-.header__logo {
+.header__left {
   font-size: 32px;
+  font-weight: 900;
+  font-family: "Oswald", sans-serif;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;  /* Ограничиваем размер самого контейнера */
+  height: 70px;
+  overflow: hidden; /* Всё, что вылезет за пределы 48px — обрежется */
+}
+
+.logo img {
+  width: 300%;  /* Растягиваем саму картинку, чтобы избавиться от полей */
+  height: 300%;
+  object-fit: contain;
+  transform: scale(3); /* Дополнительно масштабируем самого медведя */
 }
 
 /* ==================================================

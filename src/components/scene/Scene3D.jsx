@@ -12,7 +12,7 @@ export default function Scene3D({
   const jellyBaseColor = '#228797'
 
   return (
-    <div style={{ width: '100vw', height: '100vh', background: '#111111', position: 'relative' }}>
+    <div className="scene">
 <Canvas
   camera={{
     position: [0, 0.05, 1.25],
